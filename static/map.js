@@ -1,6 +1,6 @@
 var app_config = {
     geojson_feeds: {
-        USA: 'geojson/USA-states.geojson',
+        USA: 'geojson/USA.geojson',
         World: 'geojson/countries.geojson'
     },
     area_mask_fusion_tables_query: null,
