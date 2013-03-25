@@ -3,6 +3,7 @@ This game tests your geography skills by let you dragging and matching each poly
 
 ## DEMO 
 [Swiss cantons](http://maps.vasile.ch/geopuzzle/)
+
 [USA/World Geography](https://c9.io/llamapope/geopuzzle/workspace/index.html)
 
 ## Requirements
