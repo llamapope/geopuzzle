@@ -1,23 +1,27 @@
 <!DOCTYPE html> 
 <html>
     <head>
-        <title>Swiss GeoPuzzle</title>
+        <title>USA GeoPuzzle</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         
         <link href="static/images/favicon.ico" rel="shortcut icon" />
         
-        <meta property="og:title" content="Swiss GeoPuzzle - How good are YOU at Swiss Geography ?"/>
+        <meta property="og:title" content="USA GeoPuzzle - How good are YOU at USA Geography ?"/>
         <meta property="og:type" content="non_profit"/>
-        <meta property="og:url" content="http://maps.vasile.ch/geopuzzle/"/>
-        <meta property="og:image" content="http://maps.vasile.ch/geopuzzle/static/images/embed_social_200px.png"/>
         
         <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/jquery.mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
         <link href="static/map.css" rel="stylesheet" type="text/css" />
 
         <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
         <script src="//ajax.aspnetcdn.com/ajax/jquery.mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
-        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+        
+        <!-- programatically moving a polygon requires the geometry library -->
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry"></script>
+        
+        <!-- use the moveTo extension - http://www.bram.us/2013/02/16/google-maps-v3-move-polygon/ -->
+        <script type="text/javascript" src="https://raw.github.com/bramus/google-maps-polygon-moveto/master/js/google.maps.Polygon.getBounds.js"></script>
+        <script type="text/javascript" src="https://raw.github.com/bramus/google-maps-polygon-moveto/master/js/google.maps.Polygon.moveTo.js"></script>
     
         <script src="static/map.js"></script>
     </head>
@@ -26,8 +30,8 @@
         <div data-role="page" id="map_page">
             <div data-role="panel" id="game_init">
                 <div class="panel-content">
-                    <h2>Swiss GeoPuzzle</h2>
-                    <p>How good are you at Swiss Geography ? Try your skills by dragging and matching each polygon(canton) against the correct position on the map.</p>
+                    <h2>USA GeoPuzzle</h2>
+                    <p>How good are you at USA Geography ? Try your skills by dragging and matching each polygon(state/territory) against the correct position on the map.</p>
                     
                     <fieldset data-role="controlgroup" data-type="horizontal" id="game_type" class="hidden">
                         <legend>Choose the game type:</legend>
@@ -47,7 +51,9 @@
                     <p>Created by <a href="http://www.vasile.ch/" target="_blank">Vasile Coțovanu</a> and inspired from <a href="http://www.morethanamap.com/demos/visualization/puzzle" target="_blank">Luke Mahe</a>'s hack on GMaps draggable polygons. Powered by <a href="http://view.jquerymobile.com/1.3.0/" target="_blank">jQueryMobile</a>.</p>
                     <p>Geodata source: <a href="http://www.bfs.admin.ch/bfs/portal/en/index/themen/00/04.html" target="_blank">BFS</a>.</p>
 
-                    <p>The game source code is available on <a href="https://github.com/vasile/geopuzzle" target="_blank">Github</a>. 
+                    <p>The original game source code is available on <a href="https://github.com/vasile/geopuzzle" target="_blank">Github</a>. 
+                    
+                    <p>The USA game source code is available on <a href="https://github.com/llamapope/geopuzzle" target="_blank">Github</a>. 
                 </div>
             </div>
             <div data-role="panel" id="game_end">
@@ -74,11 +80,11 @@
                 <div id="game_bar_info" class="hidden"></div>
                 <div id="social">
                     <div>
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="How good are you at Swiss Geography ?" data-lang="en" data-hashtags="quiz,trivia">Tweet</a>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="How good are you at USA Geography ?" data-lang="en" data-hashtags="quiz,trivia">Tweet</a>
                         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
                     </div>
                     <div>
-                        <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fmaps.vasile.ch%2Fgeopuzzle%2F&amp;send=false&amp;layout=button_count&amp;width=100&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe>
+                        <iframe src="http://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fc9.io%2Fllamapope%2Fgeopuzzle%2Fworkspace%2Findex.html&amp;send=false&amp;layout=button_count&amp;width=100&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe>
                     </div>
                     <div>
                         <g:plusone size="medium"></g:plusone>

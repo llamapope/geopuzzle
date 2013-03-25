@@ -1,6 +1,7 @@
 var app_config = {
     geojson_feeds: {
-        Cantons: 'geojson/G3K12.geojson'
+        USA: 'geojson/USA-states.geojson',
+        World: 'geojson/countries.geojson'
     },
     area_mask_fusion_tables_query: null,
     styles: {
@@ -30,6 +31,8 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
     if (ua_is_mobile) {
         $('body').addClass('mobile');
     }
+    
+    var accuracy = 0.5;
     
     var app_data = (function(){
         var data = [];
@@ -243,8 +246,18 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
         var selector = $('#difficulty input:radio');
         selector.change(function(){
             mapSetStyles($(this).val());
+            
+            gameSetAccuracy($(this).val());
         });
         mapSetStyles(selector.val());
+        
+        function gameSetAccuracy(value) {
+            if(value === 'easy') {
+                accuracy = 0.5;
+            } else {
+                accuracy = 1;
+            }
+        }
     })();
     
     (function(){
@@ -324,7 +337,8 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
             $.each(overlay.paths, function(k, path){
                 var new_path = [];
                 $.each(path, function(k, point){
-                    var new_point = new google.maps.LatLng(point.lat() + shift_y, point.lng() + shift_x);
+                    // setting offset here causes shape not to match if dragging it very far north or sourth on the map
+                    var new_point = new google.maps.LatLng(point.lat(), point.lng());
                     new_path.push(new_point);
                 });
                 new_paths.push(new_path);
@@ -334,9 +348,14 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
                 paths: new_paths,
                 map: map,
                 draggable: true,
-                zIndex: 2
+                zIndex: 2,
+                // set geodesic to true to enable distortion while dragging (causes issues for large territories, USA)
+                geodesic: false
             });
             overlay.polygon.setOptions(app_config.styles.polygon_draggable);
+            
+            // TODO: figure out how to make this work without it breifly revealing the location of the polygon on the map
+            overlay.polygon.moveTo(map.getCenter());
             
             overlay.polygon.set('did_not_move', true);
             overlay.polygon.set('overlay_id', overlay_id);
@@ -362,12 +381,12 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
                     });
                 });
 
-                var new_bounds_sw_x = new_bounds.getSouthWest().lng() - 0.05;
-                var new_bounds_sw_y = new_bounds.getSouthWest().lat() - 0.05;
+                var new_bounds_sw_x = new_bounds.getSouthWest().lng() - accuracy;
+                var new_bounds_sw_y = new_bounds.getSouthWest().lat() - accuracy;
                 var new_bounds_sw = new google.maps.LatLng(new_bounds_sw_y, new_bounds_sw_x);
 
-                var new_bounds_ne_x = new_bounds.getNorthEast().lng() + 0.05;
-                var new_bounds_ne_y = new_bounds.getNorthEast().lat() + 0.05;
+                var new_bounds_ne_x = new_bounds.getNorthEast().lng() + accuracy;
+                var new_bounds_ne_y = new_bounds.getNorthEast().lat() + accuracy;
                 var new_bounds_ne = new google.maps.LatLng(new_bounds_ne_y, new_bounds_ne_x);
 
                 new_bounds = new google.maps.LatLngBounds(new_bounds_sw, new_bounds_ne);
