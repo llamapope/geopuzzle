@@ -10,7 +10,8 @@ var app_config = {
             strokeOpacity: 0.8,
             strokeWeight: 2,
             fillColor: "#FF0000",
-            fillOpacity: 0.1
+            fillOpacity: 0.1,
+            visible: true
         },
         polygon_final: {
             strokeColor: '#347C17',
@@ -350,12 +351,15 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
                 draggable: true,
                 zIndex: 2,
                 // set geodesic to true to enable distortion while dragging (causes issues for large territories, USA)
-                geodesic: false
+                geodesic: false,
+                // hide the polygon until after it has been moved from it's original location
+                visible: false
             });
-            overlay.polygon.setOptions(app_config.styles.polygon_draggable);
             
-            // TODO: figure out how to make this work without it breifly revealing the location of the polygon on the map
+            // move the polygon to the center of the screen
             overlay.polygon.moveTo(map.getCenter());
+            
+            overlay.polygon.setOptions(app_config.styles.polygon_draggable);
             
             overlay.polygon.set('did_not_move', true);
             overlay.polygon.set('overlay_id', overlay_id);
