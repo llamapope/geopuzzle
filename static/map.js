@@ -33,6 +33,9 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
         $('body').addClass('mobile');
     }
     
+    // TODO: make this based on the size of the polygon being placed.
+    // Large polygons need more tolerance or it is frustrating to place them.
+    // Small areas need less tolerance or it is too easy.
     var accuracy = 0.5;
     
     var app_data = (function(){
@@ -375,7 +378,12 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
             $.each(overlay.paths, function(k, path){
                 var new_path = [];
                 $.each(path, function(k, point){
-                    // setting offset here causes shape not to match if dragging it very far north or sourth on the map
+                    // Setting offset here causes shape not to match if dragging
+                    // it very far north or sourth on the map due to rendering
+                    // projection being used by the map. To avoid this, use the
+                    // original coordinates, with the polygon hidden, and then
+                    // move the polygon to the center of the viewport and make
+                    // the polygon visible.
                     var new_point = new google.maps.LatLng(point.lat(), point.lng());
                     new_path.push(new_point);
                 });
@@ -387,15 +395,23 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
                 map: map,
                 draggable: true,
                 zIndex: 2,
-                // set geodesic to true to enable distortion while dragging (causes issues for large territories, USA)
-                geodesic: false,
-                // hide the polygon until after it has been moved from it's original location
+                // with the accuracy set high enough, this doesn't seem to cause
+                // problems.
+                // TODO: make this a setting, make the polygon recalculate it's
+                // path everytime the piece is dropped to help reduce rounding 
+                // issues caused by setting this option to true
+                geodesic: true,
+                // hide the polygon until after it has been moved from it's
+                // original location so the user isn't able to see where the
+                // piece needs to be placed
                 visible: false
             });
             
             // move the polygon to the center of the screen
             overlay.polygon.moveTo(map.getCenter());
             
+            // polygon_draggable needs to set the visibility to true or the pice
+            // will be hidden
             overlay.polygon.setOptions(app_config.styles.polygon_draggable);
             
             overlay.polygon.set('did_not_move', true);
