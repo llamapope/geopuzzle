@@ -1,7 +1,6 @@
 var app_config = {
     geojson_feeds: {
-        USA: 'geojson/USA.geojson',
-        World: 'geojson/countries.geojson'
+        $feeds: [ './geojson table a' ]
     },
     area_mask_fusion_tables_query: null,
     styles: {
@@ -37,6 +36,42 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
     
     var app_data = (function(){
         var data = [];
+        
+        // if there is a $feeds key, we need to load in multiple feed sources
+        if(app_config.geojson_feeds.$feeds) {
+           var newFeeds = {};
+           
+            $.each(app_config.geojson_feeds.$feeds, function(f, geojson_feed){
+               // url is up to the first space
+               var feedURL = geojson_feed.replace(/\s.*$/, '');
+               // after a space is a jQuery selector for items to match for feed sources
+               var feedSelector = geojson_feed.replace(/^[^\s]+\s/, '');
+               
+               // load the feed and process it
+               $.ajax(feedURL, {
+                  async: false,
+                  success: function(data) {
+                      // put the results into an empty div to normalize html
+                      var dataIsland = $("<div/>").append($(data));
+                      
+                      dataIsland.find(feedSelector).each(function(){
+                         var newFeedItem = {};
+                         
+                         newFeedItem[$(this).text().replace('_', ' ').replace(/\.geo\.?json$/, '')] = $(this).attr("href");
+                         
+                         $.extend(newFeeds, newFeedItem);
+                      });
+                  }
+               });
+            });
+            
+            // append the new feed information to the application feed array
+            $.extend(app_config.geojson_feeds, newFeeds);
+            
+            // remove the $feeds from the feed information
+            delete app_config.geojson_feeds['$feeds'];
+        }
+        
         $.each(app_config.geojson_feeds, function(k, geojson_url){
             var overlays = [];
             var area_bounds = new google.maps.LatLngBounds();
@@ -91,11 +126,12 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
     var game_type = (function(){
         var type_id = 0;
         if (app_data.length > 1) {
-            var game_type_rows = [];
+            var game_type_rows = ['<label for="game_type_select">Select a dataset</label><select id="game_type_select" name="game_type">'];
             $.each(app_data, function(k, row){
-                var game_type_row = '<input type="radio" name="game_type" id="game_type_' + row.name + '" value="' + k + '"' + (k === 0 ? ' checked="checked"' : '') + ' /><label for="game_type_' + row.name + '">' + row.name + '</label>';
+                var game_type_row = '<option value="' + k + '"' + (k === 0 ? ' selected="selected"' : '') + '>' + row.name + '</option>';
                 game_type_rows.push(game_type_row);
             });
+            game_type_rows.push('</select>');
             $('#game_types').html(game_type_rows.join("\n"));
             $('#game_type').removeClass('hidden');
         }
@@ -106,7 +142,7 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
         }
         setTypeId(type_id);
         
-        $('#game_type input:radio').change(function(){
+        $('#game_type :input[name=game_type]').change(function(){
             setTypeId($(this).val());
         });
         
