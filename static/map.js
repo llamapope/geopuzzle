@@ -33,7 +33,7 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
         $('body').addClass('mobile');
     }
     
-    // TODO: make this based on the size of the polygon being placed.
+    // TODO: make the accuracy be based on the size of the polygon being placed.
     // Large polygons need more tolerance or it is frustrating to place them.
     // Small areas need less tolerance or it is too easy.
     var accuracy = 0.5;
@@ -143,6 +143,13 @@ $(document).delegate("#map_page", "pagebeforecreate", function(){
         function setTypeId(value) {
             type_id = value;
             $('#polygon_stats').html("0/" + app_data[type_id].overlays.length);
+            
+            // center the map on the selected game's boundaries any time the
+            // type of game changes
+            if(map) { 
+                var bounds = app_data[type_id].bounds;
+                map.fitBounds(bounds);
+            }
         }
         setTypeId(type_id);
         
