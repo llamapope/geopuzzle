@@ -1,5 +1,6 @@
 var app_config = {
     geojson_feeds: {
+        // loads all geojson feeds from links in a table
         $feeds: [ './geojson table a' ]
     },
     area_mask_fusion_tables_query: null,
